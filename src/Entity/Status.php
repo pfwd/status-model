@@ -1,40 +1,47 @@
 <?php
 namespace PFWD\Model\Status\Entity;
 use \DateTime;
+use \Exception;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class Status
- * @Entity
- * @Table(name="status")
+ * @ORM\Entity
+ * @ORM\Table(name="status")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Status {
 
     /**
      * @var int|null
-     * @Column(type="integer")
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var string
-     * @Column(length=140)
+     * @ORM\Column(type="string", length=140)
      */
     private $name = '';
 
     /**
      * @var DateTime
-     * @Column(type="datetime", name="date_created")
+     * @@ORM\Column(type="datetime", name="date_created")
      */
     private $dateCreated;
 
     /**
      * @var DateTime
-     * @Column(type="datetime", name="date_updated")
+     * @ORM\Column(type="datetime", name="date_updated")
      */
     private $dateUpdated;
 
     /**
-     * Status constructor
+     * Status constructor.
+     *
+     * @throws Exception
      */
     public function __construct()
     {
@@ -90,12 +97,19 @@ class Status {
     }
 
     /**
-     * @param DateTime $dateCreated
+     * @ORM\PrePersist
+     *
+     * @param DateTime|null $dateCreated
      *
      * @return Status
+     *
+     * @throws Exception
      */
-    public function setDateCreated(DateTime $dateCreated):Status
+    public function setDateCreated(DateTime $dateCreated = null):Status
     {
+        if(!$dateCreated instanceof  DateTime){
+            $dateCreated = new DateTime();
+        }
         $this->dateCreated = $dateCreated;
 
         return $this;
@@ -110,13 +124,25 @@ class Status {
     }
 
     /**
-     * @param DateTime $dateUpdated
+     * @ORM\PrePersist
+     *
+     * @param DateTime|null $dateUpdated
+     *
+     * @ORM\PrePersist
      *
      * @return Status
+     *
+     * @throws Exception
      */
-    public function setDateUpdated(DateTime $dateUpdated):Status
+    public function setDateUpdated(DateTime $dateUpdated = null):Status
     {
+
+        if(!$dateUpdated instanceof  DateTime){
+            $dateUpdated = new DateTime();
+        }
+
         $this->dateUpdated = $dateUpdated;
+
         return $this;
     }
 
